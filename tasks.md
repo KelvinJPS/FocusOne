@@ -11,7 +11,7 @@
 - CRUD tasks (create, save, and update tasks)
     * [x] init db
     * [x] create tasks 
-    * [ ] get tasks 
+    * [x] get tasks 
     * [ ] update tasks
 
 ## Done
