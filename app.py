@@ -22,10 +22,10 @@ def add_task(name,time,description="",date=""):
 
 def get_tasks():
     con, cur = init_db()
-    res=cur.execute("SELECT * FROM TASKS")
+    res=cur.execute("SELECT name FROM tasks")
     tasks=res.fetchall()
     con.close()
     return tasks
+
 def parse_time(time):
     return time
-
