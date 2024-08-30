@@ -60,34 +60,3 @@ def parse_time(time_input: str) -> int:
     return time_parsed
 
 
-# def parse_time(time_input):
-#     """"natural like time input into seconds ex: 1m to 60"""
-#    
-#     if time_input == "":
-#         raise Exception("string invalid")
-#
-#     time_input = time_input.split(' ')
-#     time_parsed = 0
-#
-#     if len(time_input) > 3: 
-#         raise Exception("More than 3 time units it is not allowed")
-#
-#     for time in time_input:
-#         time_tail = time[-1]
-#         try:
-#             n = int(time[:-1])
-#         except ValueError:
-#             raise Exception(f"Invalid time value: '{time[:-1]}' cannot be converted to an integer")
-#
-#         if time_tail == "m":
-#             time_parsed += n*60
-#         
-#         elif time_tail == "h":
-#             time_parsed += n*3600
-#         
-#         elif time_tail == "s":
-#             time_parsed += n
-#         else: 
-#             raise Exception(f"Invalid time unit: '{time_tail}'")
-#
-#     return time_parsed
