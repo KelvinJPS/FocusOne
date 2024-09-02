@@ -20,6 +20,12 @@
     * [x] get tasks 
     * [ ] update tasks
 
+- show current block
+3 issues needs to be solved
+1. reset the time 
+2. change from active to not 
+
+
 ## Done
 
 - cli arguments
