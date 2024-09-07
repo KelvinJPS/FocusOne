@@ -1,7 +1,9 @@
-from os import close
 import Xlib
 import Xlib.display
 from ewmh import EWMH
+from notifypy import Notify
+
+ewmh = EWMH()
 
 def get_open_programs():
     ewmh = EWMH()
@@ -18,13 +20,28 @@ def get_open_programs():
     
     return programs
 
-def close_programs(programs):
-    open_programs = get_open_programs()
-    for program in programs:
-        program = program.lower()
-        if any(program == p.lower() for p in open_programs):
-            print("found")
-            print(program)
+def close_programs(allowed_programs):
+    active_window = ewmh.getActiveWindow()
     
-if __name__ == "__main__":
-    close_programs(['firefox','alacritty'])
+    # Check if the active window is valid
+    if active_window:
+        # Get the window's class (which includes the program name)
+        window_class = active_window.get_wm_class()
+
+        if window_class:
+            # The second element is typically the program name
+            program_name = window_class[1].lower()
+            if program_name not in (p.lower() for p in allowed_programs):
+                ewmh.setCloseWindow(active_window)
+                ewmh.display.flush()
+                notification = Notify()
+                notification.title = "Focusone"
+                notification.message = "program not allowed, Focus!"
+                notification.send()
+            
+            else:
+                pass
+
+    else:
+        pass
+

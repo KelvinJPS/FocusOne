@@ -1,7 +1,9 @@
-from datetime import date, datetime
 import sqlite3 
 import  time
-import sys
+import threading
+import time
+import x_utils
+from rich.progress import Progress
 
 DATABASE = "blocks.db"
 
@@ -125,7 +127,7 @@ def get_act_block():
 def show_act(bar_opt=False):
     
     if get_act_block() == None: 
-        print("No block active")
+        print("no block active")
         return
    
     id=get_act_block()[0]
@@ -148,6 +150,45 @@ def show_act(bar_opt=False):
     
     update_block(id,time=0,active=0)
 
+def block_distractions(programs,websites,stop_event):
+     while not stop_event.is_set():
+        x_utils.close_programs(allowed_programs=programs)
+        time.sleep(1)  # Check the stop_event every second
+
+
+def show_progress(duration_seconds,title):
+    
+    while duration_seconds > 0:
+        hours, remainder = divmod(duration_seconds, 3600)
+        minutes, secs = divmod(remainder, 60)
+        timer = f"{title} {hours:02d}:{minutes:02d}:{secs:02d}"
+   
+        # if bar_opt:
+        #     print(timer, flush=True)
+        # 
+        # else:
+        print(timer, end="\r")
+    
+        duration_seconds -= 1
+        time.sleep(1)
+    
+    # with Progress() as progress:
+    #     task = progress.add_task(f"[green]Focusing on {title}", total=duration_seconds)
+    #     while not progress.finished:
+    #         progress.update(task, advance=1)
+    #         time.sleep(1)
+
+def start_focus_session(duration, programs_allowed, websites_allowed,block_name):
+    stop_event = threading.Event()
+    timer_thread = threading.Thread(target=show_progress, args=(duration,block_name))
+    blocker_thread = threading.Thread(target=block_distractions, args=(programs_allowed, websites_allowed, stop_event))
+    
+    timer_thread.start()
+    blocker_thread.start()
+    
+    timer_thread.join()
+    stop_event.set()  # Signal the blocker to stop
+    blocker_thread.join()  # Wait for the blocker to finish
 
 
 init_db()

@@ -2,6 +2,7 @@ import argparse
 import focusone
 import os 
 from datetime import date, datetime
+import x_utils
 
 def main():
     parser = argparse.ArgumentParser(
@@ -17,10 +18,10 @@ def main():
     
     # add command 
     parser_add.add_argument('name', help="name of the task")
-    parser_add.add_argument('time', nargs='+', help="time to focus on the task (e.g., '1h 45m')")
+    parser_add.add_argument('time', nargs='*', help="time to focus on the task (e.g., '1h 45m')")
     parser_add.add_argument('-desc', '--description', help="description of the task")
     parser_add.add_argument('-d', '--date', help="date when the task will be performed")
-    parser_add.add_argument('-p', '--programs', help="list of allowed programs")
+    parser_add.add_argument('-p', '--programs', nargs='+',  help="list of allowed programs") 
     parser_add.add_argument('-w', '--websites', help="list of allowed websites")
     
     # show command 
@@ -29,16 +30,26 @@ def main():
     args = parser.parse_args()
 
     if args.command == 'add':
-        # combine time arguments
+        # validate time is present 
+
+        if not args.time:
+            parser_add.error("Time argument is required")
+        
         time_input = ' '.join(args.time)
         s_time = focusone.parse_time(time_input)
+       
+
+        # if not date is provided, date is now
         if args.date == None:
             date = datetime.now().strftime("%Y-%m-%d %H:%M")
-            focusone.add_block(args.name, s_time,date=date,active=1)
+            active = 1 
 
         else:
-            focusone.add_block(args.name, s_time,date=args.date,active=0)
-
+            date = args.date 
+            active = 0
+     
+        focusone.start_focus_session(duration=s_time,programs_allowed=args.programs, websites_allowed=args.websites,block_name=args.name)  
+    
     if args.command == 'show':
         if args.bar:
             focusone.show_act(bar_opt=True)
