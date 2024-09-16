@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Save the allowlist when the save button is clicked
   saveButton.addEventListener('click', function() {
     let allowlist = allowlistTextarea.value.split('\n').map(site => site.trim()).filter(site => site !== '');
-    
-    chrome.runtime.sendMessage({action: "updateAllowlist", allowlist: allowlist});
-    
+
+    chrome.runtime.sendMessage({ action: "updateAllowlist", allowlist: allowlist });
+
     alert('Allowlist saved!');
   });
 });

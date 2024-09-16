@@ -1,37 +1,46 @@
-let allowlist = [];
+let allowedWebsites = [];
 
-chrome.storage.sync.get(['allowlist'], function(result) {
-  if (result.allowlist) {
-    allowlist = result.allowlist;
-    updateRules();
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'setAllowedWebsites') {
+    allowedWebsites = message.websites;
+    updateBlockingRules();
   }
 });
 
-function updateRules() {
+chrome.runtime.onInstalled.addListener(() => {
   chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: [1],
     addRules: [{
       id: 1,
       priority: 1,
-      action: { type: 'allow' },
-      condition: {
-        urlFilter: '*',
-        domains: allowlist
-      },
+      action: { type: 'block' },
+      condition: { urlFilter: '*://*/*', resourceTypes: ['main_frame'] }
     }]
+  });
+});
+
+function updateBlockingRules() {
+  const rules = [{
+    id: 1,
+    priority: 1,
+    action: { type: 'block' },
+    condition: {
+      urlFilter: '*://*/*',
+      resourceTypes: ['main_frame'],
+      excludedRequestDomains: allowedWebsites
+    }
+  }];
+
+  chrome.declarativeNetRequest.updateDynamicRules({
+    removeRuleIds: [1],
+    addRules: rules
   });
 }
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.action === "updateAllowlist") {
-      allowlist = request.allowlist;
-      chrome.storage.sync.set({ allowlist: allowlist });
-      updateRules();
-    } else if (request.action === "checkIfBlocked") {
-      let url = new URL(sender.tab.url);
-      let domain = url.hostname;
-      sendResponse({ blocked: !allowlist.some(site => domain.includes(site)) });
-    }
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  if (message.allowed_websites) {
+    allowedWebsites = message.allowed_websites;
+    updateBlockingRules();
+    sendResponse({ success: true });
   }
-);
+});
