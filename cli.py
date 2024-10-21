@@ -57,9 +57,9 @@ def main():
 
         focusone.start_focus_session(
             duration=s_time,
-            programs_allowed=args.programs,
-            websites_allowed=args.websites,
             block_name=args.name,
+            programs_allowed=args.programs if args.programs else [],
+            websites_allowed=args.websites if args.websites else [],
         )
 
     if args.command == "show":
