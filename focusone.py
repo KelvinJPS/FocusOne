@@ -169,7 +169,8 @@ def show_act(bar_opt=False):
 
 def block_distractions(programs, websites, stop_event):
     while not stop_event.is_set():
-        x_utils.close_programs(allowed_programs=programs)
+        if len(programs) > 0:
+            x_utils.close_programs(allowed_programs=programs)
         block_websites(websites)
         time.sleep(1)  # Check the stop_event every second
 
