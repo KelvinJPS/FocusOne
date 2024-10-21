@@ -169,9 +169,10 @@ def show_act(bar_opt=False):
 
 def block_distractions(programs, websites, stop_event):
     while not stop_event.is_set():
-        if len(programs) > 0:
+        if programs:
             x_utils.close_programs(allowed_programs=programs)
-        block_websites(websites)
+        if websites:
+            block_websites(websites)
         time.sleep(1)  # Check the stop_event every second
 
 
@@ -213,19 +214,22 @@ def show_progress(duration_seconds, title):
     #         time.sleep(1)
 
 
-def start_focus_session(duration, programs_allowed, websites_allowed, block_name):
+def start_focus_session(duration, block_name, programs_allowed=None, websites_allowed=None):
     stop_event = threading.Event()
     timer_thread = threading.Thread(target=show_progress, args=(duration, block_name))
-    blocker_thread = threading.Thread(
-        target=block_distractions, args=(programs_allowed, websites_allowed, stop_event)
-    )
+    
+    if programs_allowed or websites_allowed:
+        blocker_thread = threading.Thread(
+            target=block_distractions, args=(programs_allowed or [], websites_allowed or [], stop_event)
+        )
+        blocker_thread.start()
 
     timer_thread.start()
-    blocker_thread.start()
-
     timer_thread.join()
-    stop_event.set()  # Signal the blocker to stop
-    blocker_thread.join()  # Wait for the blocker to finish
+    
+    if programs_allowed or websites_allowed:
+        stop_event.set()  # Signal the blocker to stop
+        blocker_thread.join()  # Wait for the blocker to finish
 
 
 init_db()
