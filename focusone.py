@@ -5,8 +5,6 @@ import sys
 import threading
 import time
 
-from rich.progress import Progress
-
 import x_utils
 
 DATABASE = "blocks.db"
@@ -135,36 +133,10 @@ def get_act_block():
     with sqlite3.connect(DATABASE) as con:
         cur = con.cursor()
     cur.execute("SELECT id, name, time FROM blocks WHERE active=1")
-    act_block = cur.fetchone()
+    result = cur.fetchone()
     con.close()
+    act_block = {"id": result[0], "name": result[1], "duration": result[2]}
     return act_block
-
-
-def show_act(bar_opt=False):
-
-    if get_act_block() == None:
-        print("no block active")
-        return
-
-    id = get_act_block()[0]
-    name = get_act_block()[1]
-    seconds = get_act_block()[2]
-
-    while seconds > 0:
-        hours, remainder = divmod(seconds, 3600)
-        minutes, secs = divmod(remainder, 60)
-        timer = f"{name} {hours:02d}:{minutes:02d}:{secs:02d}"
-
-        if bar_opt:
-            print(timer, flush=True)
-
-        else:
-            print(timer, end="\r")
-
-        seconds -= 1
-        time.sleep(1)
-
-    update_block(id, time=0, active=0)
 
 
 def block_distractions(programs, websites, stop_event):
@@ -191,42 +163,39 @@ def block_websites(allowed_websites):
         print(f"Error communicating with browser extension: {e}")
 
 
-def show_progress(duration_seconds, title):
+def show_progress(duration_seconds, title, bar_opt):
 
     while duration_seconds > 0:
         hours, remainder = divmod(duration_seconds, 3600)
         minutes, secs = divmod(remainder, 60)
         timer = f"{title} {hours:02d}:{minutes:02d}:{secs:02d}"
 
-        # if bar_opt:
-        #     print(timer, flush=True)
-        #
-        # else:
-        print(timer, end="\r")
+        if bar_opt:
+            print(timer, flush=True)
+
+        else:
+            print(timer, end="\r")
 
         duration_seconds -= 1
         time.sleep(1)
 
-    # with Progress() as progress:
-    #     task = progress.add_task(f"[green]Focusing on {title}", total=duration_seconds)
-    #     while not progress.finished:
-    #         progress.update(task, advance=1)
-    #         time.sleep(1)
 
-
-def start_focus_session(duration, block_name, programs_allowed=None, websites_allowed=None):
+def start_focus_session(
+    duration, block_name, programs_allowed=None, websites_allowed=None
+):
     stop_event = threading.Event()
     timer_thread = threading.Thread(target=show_progress, args=(duration, block_name))
-    
+
     if programs_allowed or websites_allowed:
         blocker_thread = threading.Thread(
-            target=block_distractions, args=(programs_allowed or [], websites_allowed or [], stop_event)
+            target=block_distractions,
+            args=(programs_allowed or [], websites_allowed or [], stop_event),
         )
         blocker_thread.start()
 
     timer_thread.start()
     timer_thread.join()
-    
+
     if programs_allowed or websites_allowed:
         stop_event.set()  # Signal the blocker to stop
         blocker_thread.join()  # Wait for the blocker to finish

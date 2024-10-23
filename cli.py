@@ -63,10 +63,19 @@ def main():
         )
 
     if args.command == "show":
+        block_act = focusone.get_act_block()
         if args.bar:
-            focusone.show_act(bar_opt=True)
-    else:
-        focusone.show_act()
+            focusone.show_progress(
+                title=block_act["name"],
+                duration_seconds=block_act["duration"],
+                bar_opt=True,
+            )
+        else:
+            focusone.show_progress(
+                title=block_act["name"],
+                duration_seconds=block_act["duration"],
+                bar_opt=False,
+            )
 
 
 if __name__ == "__main__":
