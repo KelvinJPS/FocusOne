@@ -15,9 +15,7 @@ setup(
         ],
     },
     author="Your Name",
-    description="A focus timer application",
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
+    description="A focus timer application that helps you stay focused by blocking distractions",
     url="https://github.com/yourusername/FocusOne",
     classifiers=[
         "Programming Language :: Python :: 3",
