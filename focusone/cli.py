@@ -2,7 +2,7 @@ import argparse
 import os
 from datetime import date, datetime
 
-import focusone
+import focusone.core
 
 
 def main():
@@ -44,9 +44,9 @@ def main():
             parser_add.error("Time argument is required")
 
         time_input = " ".join(args.time)
-        s_time = focusone.parse_time(time_input)
+        s_time = focusone.core.parse_time(time_input)
 
-        # if not date is provided, date is now
+        # if not focusone.core is provided, date is now
         if args.date == None:
             date = datetime.now().strftime("%Y-%m-%d %H:%M")
             active = 1
@@ -55,7 +55,7 @@ def main():
             date = args.date
             active = 0
 
-        focusone.start_focus_session(
+        focusone.core.start_focus_session(
             duration=s_time,
             block_name=args.name,
             programs_allowed=args.programs if args.programs else [],
@@ -63,15 +63,15 @@ def main():
         )
 
     if args.command == "show":
-        block_act = focusone.get_act_block()
+        block_act = focusone.core.get_act_block()
         if args.bar:
-            focusone.show_progress(
+            focusone.core.show_progress(
                 title=block_act["name"],
                 duration_seconds=block_act["duration"],
                 bar_opt=True,
             )
         else:
-            focusone.show_progress(
+            focusone.core.show_progress(
                 title=block_act["name"],
                 duration_seconds=block_act["duration"],
                 bar_opt=False,
