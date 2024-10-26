@@ -80,8 +80,10 @@ def get_act_block():
         cur = con.cursor()
     cur.execute("SELECT id, name, time FROM blocks WHERE active=1")
     result = cur.fetchone()
-    con.close()
+    if result == None:
+        return None
     act_block = {"id": result[0], "name": result[1], "duration": result[2]}
+    con.close()
     return act_block
 
 

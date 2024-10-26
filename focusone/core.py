@@ -1,6 +1,8 @@
 import threading
 import time
 import focusone.utils
+import json
+import os
 
 
 def block_distractions(programs, websites, stop_event):
@@ -19,20 +21,36 @@ def block_websites(allowed_websites):
         print(f"Error communicating with browser extension: {e}")
 
 
+def save_timer_state(title, end_time, duration_seconds):
+    state = {
+        "title": title,
+        "end_time": end_time,
+        "duration": duration_seconds,
+        "running": True,
+    }
+    with open("/tmp/focusone.state", "w") as f:
+        json.dump(state, f)
+
+
 def show_progress(duration_seconds, title, bar_opt):
+    # Save initial state when timer starts
+    end_time = time.time() + int(duration_seconds)
+    save_timer_state(title, end_time, duration_seconds)
+
     while duration_seconds > 0:
         hours, remainder = divmod(duration_seconds, 3600)
         minutes, secs = divmod(remainder, 60)
         timer = f"{title} {hours:02d}:{minutes:02d}:{secs:02d}"
-
         if bar_opt:
             print(timer, flush=True)
-
         else:
             print(timer, end="\r")
-
         duration_seconds -= 1
         time.sleep(1)
+
+    # Clean up state when done
+    if os.path.exists("/tmp/focusone.state"):
+        os.remove("/tmp/focusone.state")
 
 
 def start_focus_session(
@@ -56,3 +74,14 @@ def start_focus_session(
     if programs_allowed or websites_allowed:
         stop_event.set()  # Signal the blocker to stop
         blocker_thread.join()  # Wait for the blocker to finish
+
+
+def get_act_block():
+    try:
+        with open("/tmp/focusone.state", "r") as f:
+            state = json.load(f)
+            remaining = state["end_time"] - time.time()
+            if remaining > 0:
+                return {"name": state["title"], "duration": int(remaining)}
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass

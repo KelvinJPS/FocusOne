@@ -1,12 +1,8 @@
 ## To Do
 
-- show progress in system bar
-    * [ ] save state of current running block
-- block websites
 - schedule blocks
     > let the user schedule blocks 
-- background service
-    > run the schedule blocks, send a receive input from browser extension
+- block websites
 
 ## Doing
 
@@ -14,3 +10,5 @@
 ## Done
 
 - Run the program from outside of the project folder
+- show progress in system bar
+    * [x] save state of current running block
