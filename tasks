@@ -1,5 +1,12 @@
 ## To Do
 
+- show progress in system bar
+    * [ ] save state of current running block
+- block websites
+- schedule blocks
+    > let the user schedule blocks 
+- background service
+    > run the schedule blocks, send a receive input from browser extension
 
 ## Doing
 
