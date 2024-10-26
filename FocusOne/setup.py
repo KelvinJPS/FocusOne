@@ -14,9 +14,11 @@ setup(
             "focusone=FocusOne.cli:main",
         ],
     },
-    author="Your Name",
+    author="Kelvin",
     description="A focus timer application that helps you stay focused by blocking distractions",
-    url="https://github.com/yourusername/FocusOne",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    url="https://github.com/kelvin-van-vuuren/FocusOne",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
