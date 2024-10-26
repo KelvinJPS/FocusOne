@@ -1,32 +1,13 @@
-## To Do
+# Tasks
 
-- Block websites
-- Block programs
-    > block graphical apps while focusing on an app
-- timer
-    > set timer to tasks,
-- parse time
-    > parse time 30m 1h 2j
-    * [ ] s
-- term clock
-- GUI CLOCK
-- break feat
+We need already able to add new blocks, with info as duration time, date,
+description, program to block and websites.
 
-## Doing
+Already is able to block programs, but not websites.
 
-- CRUD tasks (create, save, and update tasks)
-    * [x] init db
-    * [x] create tasks 
-    * [x] get tasks 
-    * [ ] update tasks
+Now we need a way to figure out:
 
-- show current block
-3 issues needs to be solved
-1. reset the time 
-2. change from active to not 
-
-
-## Done
-
-- cli arguments
-    > define the input that the program will take and what will return
+- [ ] Display the current running block name and duration.
+- [ ] how to keep the program running in the background
+- [ ] Send the websites to block in real time to the browser extension,
+      and determine when to block the websites and which from the CLI
