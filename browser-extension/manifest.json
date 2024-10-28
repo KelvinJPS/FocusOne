@@ -1,33 +1,17 @@
 {
-  "manifest_version": 3,
-  "name": "Website Blocker",
-  "version": "1.0",
-  "description": "Blocks websites not in allowlist",
-  "permissions": [
-    "declarativeNetRequest",
-    "storage",
-    "nativeMessaging"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "manifest_version": 2,
+  "name": "FocusOne",
+  "version": "0.1",
+  "description": "Block websites not in allowed list for a period of time",
   "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_start"
+    "scripts": ["background.js"]
+  }, 
+  "permissions": ["nativeMessaging"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "FocusOne@xyz",
+      "strict_min_version": "50.0"
     }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["blocked.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }
+
