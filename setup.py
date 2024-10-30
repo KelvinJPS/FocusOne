@@ -9,6 +9,7 @@ setup(
     entry_points={
         "console_scripts": [
             "focusone=focusone.cli:main",
+            "focusoned=focusone.daemon:main",
         ],
     },
 )
